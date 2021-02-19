@@ -11,7 +11,7 @@ import React, { useEffect, useState } from 'react';
 const useStyles = makeStyles({
   quote: {
     transform: "rotate(180deg)",
-    fontSize: "100px"
+    fontSize: "50px"
   }
 });
 
@@ -28,7 +28,6 @@ function App() {
   const [quoteData, setQuoteData] = useState({});
 
   useEffect(() => {
-    
     getRandomQuote()
       .then(({ author, quote }) => {
         console.log('author and quote:', author, quote);
