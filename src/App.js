@@ -1,36 +1,46 @@
-// import logo from './logo.svg';
 import './App.css';
 import { makeStyles } from '@material-ui/core/styles';
-import { Grid, Card, IconButton } from '@material-ui/core';
+import { Grid, Card, IconButton, Button } from '@material-ui/core';
 import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 import TwitterIcon from '@material-ui/icons/Twitter';
-import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
-
-import { Icon, InlineIcon } from '@iconify/react';
+import FormatQuoteRoundedIcon from '@material-ui/icons/FormatQuoteRounded';
+import { Icon } from '@iconify/react';
 import tumblrIcon from '@iconify-icons/mdi/tumblr';
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
+import { Rotate90DegreesCcw } from '@material-ui/icons';
 
 const useStyles = makeStyles({
   root: {
     // minWidth: 275,
   },
-  bullet: {
-    display: 'inline-block',
-    margin: '0 2px',
-    transform: 'scale(0.8)',
-  },
-  title: {
-    fontSize: 14,
-  },
-  pos: {
-    marginBottom: 12,
-  },
+  quote: {
+    transform: "rotate(180deg)",
+    fontSize: "100px"
+  }
 });
+
+const getRandomQuote = async () => {
+  const quoteObj = await fetch('http://quotes.stormconsultancy.co.uk/random.json');
+  return quoteObj.json();
+}
 
 function App() {
   const classes = useStyles();
-  const bull = <span className={classes.bullet}>•</span>;
+  const [quoteData, setQuoteData] = useState({});
+
+  useEffect(() => {
+    getRandomQuote()
+      .then(({ author, quote }) => {
+        console.log('author and quote:', author, quote);
+        setQuoteData({
+          author,
+          quote,
+        })
+      });
+  }, []);
 
   return (
     <Grid container direction="row" align="center" style={{height: "100vh", backgroundColor: "teal"}}>
@@ -39,24 +49,26 @@ function App() {
         <Card className={classes.root} id="quote-box" >
             <CardContent >
               <Typography id="text" variant="h5" >
-                "I've learned something too: selling out is sweet because, when you sell out, you get to make a lot of money, 
-                and when you have money, you don't have to hang out with a bunch of poor losers like you guys. Screw you guys, 
-                I'm going home."
+                <FormatQuoteRoundedIcon className={classes.quote}/> {quoteData.quote} 
               </Typography>
-              <Typography className={classes.title} id="author" color="textSecondary" gutterBottom>
-                -Eric Cartman
+              <Typography id="author" color="textSecondary" gutterBottom>
+                - {quoteData.author}
               </Typography>
             </CardContent>
             <CardActions>
-              <IconButton  size="small">
-                <a id="tweet-quote">
+              <IconButton style={{marginLeft: "20px"}} size="small">
+                <a id="tweet-quote" href="http://twitter.com/intent/tweet" rel="noreferrer" target="_blank">
                   <TwitterIcon />
                 </a>
               </IconButton>
-              <IconButton size="small">
-                <Icon icon={tumblrIcon} />
-              </IconButton>
-              <IconButton id="new-quote" size="small" style={{marginLeft: "auto"}}>New Quote</IconButton>
+                <IconButton id="new-quote" size="small" style={{marginLeft: "auto", marginRight: "20px"}} onClick={() => {getRandomQuote()
+                  .then(({ author, quote }) => {
+                    console.log('author and quote:', author, quote);
+                    setQuoteData({
+                      author,
+                      quote,
+                    })
+                  })}}>New Quote</IconButton>
             </CardActions>
           </Card>
       </Grid>
